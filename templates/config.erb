@@ -26,7 +26,7 @@ BACKUP_DONE=<%= @flag_path.shellescape %>
 BACKUP_OPTIONS=(
 <% @backup_options.each do |option| -%>
 <%= option.shellescape %>
-<% done %>
+<% end %>
 )
 
 # Number of backups to keep
