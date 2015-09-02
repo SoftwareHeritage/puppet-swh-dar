@@ -1,0 +1,53 @@
+#!/bin/bash
+#
+# swh-dar-copy-remote-backup: copy the latest remote backup and remove it
+#
+# Copyright (c) 2015 Nicolas Dandrimont <nicolas@dandrimont.eu>
+#
+# This file is part of the swh-dar puppet module
+#
+
+set -e
+
+BACKUP_KEEP=1
+
+if [ $# -ne 4 ]; then
+  echo "Usage: $0 <remote host> <remote backup name> <remote host's backup storage dir> <local host's backup storage dir>"
+  exit 2
+fi
+
+HOST="$1"
+REMOTE_BACKUP_NAME="$2"
+REMOTE_STORAGE="$3"
+LOCAL_STORAGE="$4"
+
+REMOTE_FLAG="$REMOTE_STORAGE/backups_done/$REMOTE_BACKUP_NAME"
+REMOTE_LOCK="$REMOTE_STORAGE/locks/$REMOTE_BACKUP_NAME"
+REMOTE_BACKUPS_BASENAME="$REMOTE_STORAGE/$REMOTE_BACKUP_NAME"
+LOCAL_STORAGE_DIR="$LOCAL_STORAGE/$HOST"
+
+# Test remote flag for backup done
+if ! ssh "$HOST" test -f "$REMOTE_FLAG"; then
+    exit 0
+fi
+
+# Prevent new backups from running
+ssh "$HOST" touch "$REMOTE_LOCK"
+
+file="$(ssh "$HOST" ls -1t "$REMOTE_BACKUPS_BASENAME"\* | head -1)"
+
+mkdir -p "$LOCAL_STORAGE_DIR"
+scp "$HOST:$file" "$LOCAL_STORAGE_DIR" >/dev/null
+
+ssh "$HOST" rm -f "$REMOTE_LOCK" "$REMOTE_FLAG" "$file"
+
+count=0
+ls -1t "$LOCAL_STORAGE_DIR"/* | while read file; do
+    ((count=count+1))
+    if (( "$count" > $BACKUP_KEEP )); then
+	rm "$file"
+    fi
+done
+
+
+
