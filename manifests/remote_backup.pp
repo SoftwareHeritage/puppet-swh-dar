@@ -7,6 +7,9 @@
 # [*remote_backup_storage*]
 #   The directory for backups on the remote host (default: '/srv/backups')
 #
+# [*remote_backup_host*]
+#   The host on which the remote backup is stored (default: "$::hostname")
+#
 # [*remote_backup_name*]
 #   The name for the remote backup to retreive (default: "$::hostname")
 #
@@ -31,6 +34,7 @@
 
 define dar::remote_backup (
   $remote_backup_storage = '/srv/backups',
+  $remote_backup_host    = $::hostname,
   $remote_backup_name    = $::hostname,
   $local_backup_storage  = '/srv/remote-backups',
   $hour                  = undef,
@@ -39,10 +43,10 @@ define dar::remote_backup (
   $monthday              = undef,
   $weekday               = undef,
 ) {
-  cron { "dar_remote_backup.${::hostname}.${remote_backup_name}":
+  cron { "dar_remote_backup.${remote_backup_host}.${remote_backup_name}":
     ensure   => present,
     user     => 'root',
-    command  => "/usr/local/bin/swh-dar-copy-remote-backup \"${::hostname}\" \"${remote_backup_name}\" \"${remote_backup_storage}\" \"${local_backup_storage}\"",
+    command  => "/usr/local/bin/swh-dar-copy-remote-backup \"${remote_backup_host}\" \"${remote_backup_name}\" \"${remote_backup_storage}\" \"${local_backup_storage}\"",
     hour     => $hour,
     minute   => $minute,
     month    => $month,
