@@ -31,7 +31,7 @@
 
 define dar::remote_backup (
   $remote_backup_storage = '/srv/backups',
-  $remote_backup_name    = "$::hostname",
+  $remote_backup_name    = $::hostname,
   $local_backup_storage  = '/srv/remote-backups',
   $hour                  = undef,
   $minute                = undef,

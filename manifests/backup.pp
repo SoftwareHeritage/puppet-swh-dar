@@ -106,9 +106,9 @@ define dar::backup (
   }
 
   file { [
-      "${real_flag_dir}",
-      "${real_lock_dir}",
-      "${real_config_dir}",
+      $real_flag_dir,
+      $real_lock_dir,
+      $real_config_dir,
     ]:
     ensure  => directory,
     owner   => 'root',
