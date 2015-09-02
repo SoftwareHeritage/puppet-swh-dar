@@ -29,6 +29,9 @@ trap "rm -f '$BACKUP_LOCK'" EXIT
 
 touch "$BACKUP_LOCK"
 
+# Don't let people believe that they can fetch the current backup
+rm -f "$BACKUP_DONE"
+
 BACKUP_BASENAME="$BACKUP_STORAGE/$BACKUP_TITLE."
 BACKUP_PATH="$BACKUP_BASENAME$(TZ=UTC date +"%Y-%m-%dT%H:%M:%SZ")"
 
