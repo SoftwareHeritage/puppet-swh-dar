@@ -23,5 +23,5 @@ class dar::backup_server {
     source => 'puppet:///modules/dar/swh-dar-copy-remote-backup'
   }
 
-  Dar::Remote_Backup <| |>
+  Dar::Remote_Backup <<| |>>
 }
