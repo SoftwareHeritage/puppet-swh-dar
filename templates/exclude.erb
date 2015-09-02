@@ -1,0 +1,8 @@
+# Excludes for backup <%= @title %>
+# Managed by puppet. Your modifications will be overwritten
+
+BACKUP_EXCLUDE_OPTIONS=(
+<% @backup_excludes.each do |exclude| %>
+-P <%= exclude.shellescape %>
+<% end -%>
+)

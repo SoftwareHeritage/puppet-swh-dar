@@ -1,0 +1,60 @@
+#!/bin/bash
+#
+# swh-dar-backup: run a local backup with dar
+#
+# Copyright (c) 2015 Nicolas Dandrimont <nicolas@dandrimont.eu>
+#
+# This file is part of the swh-dar puppet module
+#
+
+set -e
+
+if [ $# -ne 1 ]; then
+  echo "Usage: $0 <config file>"
+  exit 2
+fi
+
+BACKUP_CONFIG="$1"
+
+. "$BACKUP_CONFIG"
+. "$BACKUP_INCLUDE"
+. "$BACKUP_EXCLUDE"
+
+if [ -f "$BACKUP_LOCK" ]; then
+  echo "Lockfile \`$BACKUP_LOCK' present, exiting"
+  exit 2
+fi
+
+trap "rm -f '$BACKUP_LOCK'" EXIT
+
+touch "$BACKUP_LOCK"
+
+BACKUP_BASENAME="$BACKUP_STORAGE/$BACKUP_TITLE."
+BACKUP_PATH="$BACKUP_BASENAME$(TZ=UTC date +"%Y-%m-%dT%H:%M:%SZ")"
+
+DAR_OPTIONS=(
+    -c
+    "$BACKUP_PATH"
+    -R
+    "$BACKUP_BASE"
+    "${BACKUP_INCLUDE_OPTIONS[@]}"
+    # Include empty directories
+    -D
+    "${BACKUP_EXCLUDE_OPTIONS[@]}"
+    "${BACKUP_OPTIONS[@]}"
+)
+
+# Do the backup
+/usr/bin/dar "${DAR_OPTIONS[@]}"
+
+# Touch the flag file
+touch "$BACKUP_DONE"
+
+# Prune old backups
+count=0
+ls -1t "$BACKUP_BASENAME"* | while read f; do
+    ((count=count+1))
+    if (( "$count" > $BACKUP_KEEP )); then
+	rm "$f";
+    fi
+done

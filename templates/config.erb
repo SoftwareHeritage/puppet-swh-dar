@@ -1,0 +1,33 @@
+# Configuration for backup <%= @title %>
+# Managed by puppet. Your modifications will be overwritten
+
+# Name of the backup file
+BACKUP_TITLE=<%= @title.shellescape %>
+
+# Path where backups are stored
+BACKUP_STORAGE=<%= @backup_storage.shellescape %>
+
+# Base path of the backup
+BACKUP_BASE=<%= @backup_base.shellescape %>
+
+# Includes
+BACKUP_INCLUDE=<%= @include_path.shellescape %>
+
+# Excludes
+BACKUP_EXCLUDE=<%= @exclude_path.shellescape %>
+
+# Lock file
+BACKUP_LOCK=<%= @lock_path.shellescape %>
+
+# Done file
+BACKUP_DONE=<%= @flag_path.shellescape %>
+
+# Additional options to dar
+BACKUP_OPTIONS=(
+<% @backup_options.each |option| -%>
+<%= option.shellescape %>
+<% done %>
+)
+
+# Number of backups to keep
+BACKUP_KEEP="<%= @keep_backups %>"
