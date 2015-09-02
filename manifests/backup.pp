@@ -74,9 +74,9 @@ define dar::backup (
   $weekday          = undef,
   $keep_backups     = 1,
   $backup_base      = '/',
-  $backup_selection = undef,
-  $backup_exclusion = undef,
-  $backup_options   = undef,
+  $backup_selection = [],
+  $backup_exclusion = [],
+  $backup_options   = [],
   ) {
 
   include dar
