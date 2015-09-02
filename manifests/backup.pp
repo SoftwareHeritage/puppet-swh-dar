@@ -145,7 +145,7 @@ define dar::backup (
     ],
   }
 
-  file { $include_path:
+  file { $includes_path:
     ensure  => present,
     owner   => 'root',
     group   => 'root',
@@ -153,7 +153,7 @@ define dar::backup (
     content => template('dar/include.erb'),
   }
 
-  file { $exclude_path:
+  file { $excludes_path:
     ensure  => present,
     owner   => 'root',
     group   => 'root',
