@@ -140,8 +140,8 @@ define dar::backup (
     content => template('dar/config.erb'),
     require => [
       File[$real_config_dir],
-      File[$include_path],
-      File[$exclude_path],
+      File[$includes_path],
+      File[$excludes_path],
     ],
   }
 
