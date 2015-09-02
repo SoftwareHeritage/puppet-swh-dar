@@ -33,14 +33,20 @@ fi
 
 # Prevent new backups from running
 ssh "$HOST" touch "$REMOTE_LOCK"
+# Prevent new copies from running
+ssh "$HOST" rm -f "$REMOTE_FLAG"
 
+# Find latest remote backup
 file="$(ssh "$HOST" ls -1t "$REMOTE_BACKUPS_BASENAME"\* | head -1)"
 
+# Copy latest remote backup
 mkdir -p "$LOCAL_STORAGE_DIR"
 scp "$HOST:$file" "$LOCAL_STORAGE_DIR" >/dev/null
 
-ssh "$HOST" rm -f "$REMOTE_LOCK" "$REMOTE_FLAG" "$file"
+# Prune latest remote backup and release the lock
+ssh "$HOST" rm -f "$REMOTE_LOCK" "$file"
 
+# Prune local backups
 count=0
 ls -1t "$LOCAL_STORAGE_DIR"/* | while read file; do
     ((count=count+1))
