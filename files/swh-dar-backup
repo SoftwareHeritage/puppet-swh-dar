@@ -48,16 +48,27 @@ DAR_OPTIONS=(
 )
 
 # Do the backup
-/usr/bin/dar "${DAR_OPTIONS[@]}"
+echo "[$(date -R)] Starting up backup ($BACKUP_CONFIG)"
+rc=0
+/usr/bin/dar "${DAR_OPTIONS[@]}" || rc="$?"
+# Exit code 11 means a file changed during backup. Don't abort in that
+# case.
+if [ "$rc" -ne 0 -a "$rc" -ne 11 ] ; then
+  echo "[$(date -R)] dar failed (exit code=$rc). Abort."
+  exit 1
+fi
 
 # Touch the flag file
 touch "$BACKUP_DONE"
 
+echo "[$(date -R)] dar successful. Removing old backups."
 # Prune old backups
 count=0
 ls -1t "$BACKUP_BASENAME"* | while read f; do
     ((count=count+1))
     if (( "$count" > $BACKUP_KEEP )); then
-	rm "$f";
+	rm "$f"
     fi
 done
+
+echo "[$(date -R)] All done."
