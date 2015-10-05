@@ -20,14 +20,14 @@ BACKUP_CONFIG="$1"
 . "$BACKUP_INCLUDE"
 . "$BACKUP_EXCLUDE"
 
-if [ -f "$BACKUP_LOCK" ]; then
-  echo "Lockfile \`$BACKUP_LOCK' present, exiting"
+if [ -f "$BACKUP_LOCK" ] && kill -0 "$(cat "$BACKUP_LOCK")" 2>/dev/null; then
+  echo "Lockfile \`$BACKUP_LOCK' present and process still exists, exiting"
   exit 2
 fi
 
 trap "rm -f '$BACKUP_LOCK'" EXIT
 
-touch "$BACKUP_LOCK"
+echo $$ > "$BACKUP_LOCK"
 
 # Don't let people believe that they can fetch the current backup
 rm -f "$BACKUP_DONE"
