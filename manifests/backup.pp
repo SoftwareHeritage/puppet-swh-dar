@@ -94,6 +94,7 @@ define dar::backup (
 
   $flag_path     = "${real_flag_dir}/${title}"
   $lock_path     = "${real_lock_dir}/${title}"
+  $log_path      = "/var/log/dar/${title}.log"
   $config_path   = "${real_config_dir}/${title}.config"
   $includes_path = "${real_config_dir}/${title}.includes"
   $excludes_path = "${real_config_dir}/${title}.excludes"
@@ -120,7 +121,7 @@ define dar::backup (
   cron { "dar.${title}":
     ensure   => present,
     user     => 'root',
-    command  => "/usr/local/bin/swh-dar-backup \"${config_path}\"",
+    command  => "/usr/bin/chronic sh -c '/usr/local/bin/swh-dar-backup ${config_path} 2>&1 | tee -a ${log_path}'",
     hour     => $hour,
     minute   => $minute,
     month    => $month,
@@ -129,6 +130,8 @@ define dar::backup (
     require  => [
       File['/usr/local/bin/swh-dar-backup'],
       File[$config_path],
+      File['/var/log/dar'],
+      Package['moreutils'],
     ],
   }
 

@@ -26,4 +26,19 @@ class dar {
     mode   => '0755',
     source => 'puppet:///modules/dar/swh-dar-backup'
   }
+
+  file {'/var/log/dar':
+    ensure => directory,
+    owner  => 'root',
+    group  => 'adm',
+    mode   => '0640',
+  }
+
+  file {'/etc/logrotate.d/swh-dar':
+    ensure => present,
+    owner  => 'root',
+    group  => 'root',
+    mode   => '0644',
+    source => 'puppet:///modules/dar/logrotate.conf'
+  }
 }
