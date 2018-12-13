@@ -77,7 +77,7 @@ define dar::backup (
   $backup_selection = [],
   $backup_exclusion = [],
   $backup_options   = [],
-  ) {
+) {
 
   include dar
 
@@ -98,6 +98,20 @@ define dar::backup (
   $config_path   = "${real_config_dir}/${title}.config"
   $includes_path = "${real_config_dir}/${title}.includes"
   $excludes_path = "${real_config_dir}/${title}.excludes"
+
+  $fixed_backup_exclusion = $backup_exclusion.map |$excl| {
+    case $excl[0] {
+      '/': { $excl[1,-1] }
+      default: { $excl }
+    }
+  }
+
+  $fixed_backup_selection = $backup_selection.map |$sel| {
+    case $sel[0] {
+      '/': { $sel[1,-1] }
+      default: { $sel }
+    }
+  }
 
   file { $backup_storage:
     ensure => directory,
