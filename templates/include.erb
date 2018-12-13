@@ -2,7 +2,7 @@
 # Managed by puppet. Your modifications will be overwritten
 
 BACKUP_INCLUDE_OPTIONS=(
-<% @backup_selection.each do |selection| %>
+<% @backup_selection.each do |selection| -%>
 -g <%= selection.shellescape %>
 <% end -%>
 )

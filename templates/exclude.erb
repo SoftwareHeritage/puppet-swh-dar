@@ -2,7 +2,7 @@
 # Managed by puppet. Your modifications will be overwritten
 
 BACKUP_EXCLUDE_OPTIONS=(
-<% @backup_exclusion.each do |exclude| %>
+<% @backup_exclusion.each do |exclude| -%>
 -P <%= exclude.shellescape %>
 <% end -%>
 )
