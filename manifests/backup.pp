@@ -121,7 +121,7 @@ define dar::backup (
   cron { "dar.${title}":
     ensure   => present,
     user     => 'root',
-    command  => "/usr/bin/chronic sh -c '/usr/local/bin/swh-dar-backup ${config_path} 2>&1 | tee -a ${log_path}'",
+    command  => "/usr/bin/chronic bash -c 'set -eo pipefail; /usr/local/bin/swh-dar-backup ${config_path} 2>&1 | tee -a ${log_path}'",
     hour     => $hour,
     minute   => $minute,
     month    => $month,
